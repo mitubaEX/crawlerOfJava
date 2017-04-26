@@ -1,0 +1,13 @@
+.gradle
+build/
+gradle
+gradlew
+gradlew.bat
+
+.DS_Store
+.classpath
+.project
+.settings/
+bin/
+downloadJar/
+test.txt
