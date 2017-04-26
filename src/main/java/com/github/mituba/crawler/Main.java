@@ -35,9 +35,21 @@ public class Main {
             .collect(Collectors.toList());
     }
 
+    public void performURLSearch(String url) throws IOException{
+        filterFile(getListOfHrefTag(getHtmlDocument(url)).stream(), url).stream()
+            .filter(n -> !n.contains("getFileComplete"))
+            .forEach(n -> {
+                try{
+                    performURLSearch(n);
+                }catch(Exception e){
+                    System.out.println(e);
+                }
+            });
+    }
+
     public void run(String[] args){
         try{
-            filterFile(getListOfHrefTag(getHtmlDocument(args[0])).stream(), args[0]);
+            performURLSearch(args[0]);
         }catch(Exception e){
             System.out.println(e);
         }
