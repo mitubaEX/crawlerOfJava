@@ -35,21 +35,39 @@ public class Main {
             .collect(Collectors.toList());
     }
 
-    public void performURLSearch(String url) throws IOException{
-        filterFile(getListOfHrefTag(getHtmlDocument(url)).stream(), url).stream()
+    public List<String> performURLSearch(String url) throws IOException{
+        return filterFile(getListOfHrefTag(getHtmlDocument(url)).stream(), url).stream()
             .filter(n -> !n.contains("getFileComplete"))
-            .forEach(n -> {
+            .collect(Collectors.toList());
+    }
+
+    public List<List<String>> getResultList(List<List<String>> list){
+        List<List<String>> resultList = new ArrayList<>();
+        list.stream()
+            .forEach(n -> n.stream().forEach(m ->{
                 try{
-                    performURLSearch(n);
-                }catch(Exception e){
-                    System.out.println(e);
-                }
-            });
+                    resultList.add(performURLSearch(m));
+                }catch(Exception e){ System.out.println(e); }
+            }));
+        return resultList;
     }
 
     public void run(String[] args){
         try{
-            performURLSearch(args[0]);
+            List<List<String>> tempraryList = new ArrayList<>();
+            performURLSearch(args[0])
+                .forEach(n -> {
+                    try{
+                        tempraryList.add(performURLSearch(n));
+                    }catch(Exception e){
+                        System.out.println(e);
+                    }
+                });
+            while(true){
+                List<List<String>> resultList = getResultList(tempraryList);
+                if(resultList.stream().allMatch(n -> n.size() == 0))
+                    break;
+            }
         }catch(Exception e){
             System.out.println(e);
         }
