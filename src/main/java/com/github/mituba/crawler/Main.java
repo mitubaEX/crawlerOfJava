@@ -1,6 +1,8 @@
 package com.github.mituba.crawler;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 import org.jsoup.Jsoup;
@@ -8,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
@@ -41,33 +44,37 @@ public class Main {
             .collect(Collectors.toList());
     }
 
-    public List<List<String>> getResultList(List<List<String>> list){
-        List<List<String>> resultList = new ArrayList<>();
-        list.stream()
-            .forEach(n -> n.stream().forEach(m ->{
-                try{
-                    resultList.add(performURLSearch(m));
-                }catch(Exception e){ System.out.println(e); }
-            }));
-        return resultList;
+    public List<String> getProductURL(List<String> groupIdList, List<String> artifactIdList, List<String> versionList){
+        return IntStream.range(0, groupIdList.size())
+            .mapToObj(n -> groupIdList.get(n).replace(".", "/") + "/"
+                    + artifactIdList.get(n) + "/" + versionList.get(n) + "/"
+                    + artifactIdList.get(n) + "-" + versionList.get(n) + ".jar")
+            .collect(Collectors.toList());
     }
 
     public void run(String[] args){
         try{
-            List<List<String>> tempraryList = new ArrayList<>();
-            performURLSearch(args[0])
+            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(new FileDownloader().getInputStream(args[0])));
+            List<String> groupIdList = new ArrayList<>();
+            List<String> artifactIdList = new ArrayList<>();
+            List<String> versionList = new ArrayList<>();
+            bufferedreader.lines()
+                .forEach(n -> {
+                    if(n.contains("<groupId>"))
+                        groupIdList.add(n.replace(" ","").replace("<groupId>","").replace("</groupId>",""));
+                    else if(n.contains("<artifactId>"))
+                        artifactIdList.add(n.replace(" ","").replace("<artifactId>","").replace("</artifactId>",""));
+                    else if(n.contains("<version>"))
+                        versionList.add(n.replace(" ","").replace("<version>","").replace("</version>",""));
+                });
+            getProductURL(groupIdList, artifactIdList, versionList)
                 .forEach(n -> {
                     try{
-                        tempraryList.add(performURLSearch(n));
+                        performDownload("http://central.maven.org/maven2/"+ n, "downloadJar");
                     }catch(Exception e){
                         System.out.println(e);
                     }
                 });
-            while(true){
-                List<List<String>> resultList = getResultList(tempraryList);
-                if(resultList.stream().allMatch(n -> n.size() == 0))
-                    break;
-            }
         }catch(Exception e){
             System.out.println(e);
         }

@@ -19,6 +19,7 @@ public class FileDownloader{
             System.out.println(e);
         }
     }
+    public FileDownloader(){}
 
     public InputStream getInputStream(String url) throws MalformedURLException, IOException{
         HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
