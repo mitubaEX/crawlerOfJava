@@ -12,6 +12,7 @@ apply plugin: 'java'
 // Apply the application plugin to add support for building an application
 apply plugin: 'application'
 
+apply plugin: 'eclipse'
 sourceCompatibility = targetCompatibility = '1.8'
 
 // In this section you declare where to find the dependencies of your project
@@ -19,6 +20,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenLocal()
     mavenCentral()
 }
 
@@ -28,6 +30,8 @@ dependencies {
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
+
+    compile 'com.github.pochi:pochi-runner:1.0-SNAPSHOT'
 
     // https://mvnrepository.com/artifact/edu.uci.ics/crawler4j
     // compile group: 'edu.uci.ics', name: 'crawler4j', version: '4.3'

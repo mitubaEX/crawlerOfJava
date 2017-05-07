@@ -1,10 +1,7 @@
 package com.github.mituba.crawler;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -37,6 +34,7 @@ public class FileDownloader{
         InputStream in = getInputStream(url);
         while((line = in.read()) != -1)
             fileoutputstream.write(line);
+        fileoutputstream.close();
     }
 
     public File createDirectory(String directoryPath) throws IOException{

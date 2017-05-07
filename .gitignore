@@ -10,4 +10,5 @@ gradlew.bat
 .settings/
 bin/
 downloadJar/
+birthmark/
 test.txt
