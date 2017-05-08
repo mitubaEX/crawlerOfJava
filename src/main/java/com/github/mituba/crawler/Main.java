@@ -15,7 +15,7 @@ public class Main {
 	}
     public void run(){
 //    	ダウンロードしてない環境の場合，これを実行する
-    	startProcess("downloadJar");
+    	// startProcess("downloadJar");
 //    	更新確認
 //        if(new UpdateChecker().getLastUpdateDay()){
 //        	System.out.println(new UpdateChecker().getLastUpdateDay());
