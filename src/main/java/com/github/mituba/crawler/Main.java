@@ -25,7 +25,8 @@ public class Main {
         	System.out.println("delete Complete");
             startProcess("downloadJar");
         }
-        new Extractor("2-gram").performExtract("downloadJar", "birthmark");
+        //new Extractor("2-gram").performExtract("downloadJar", "birthmark");
+        new XMLOfBirthmarkCreater().createXML("json", "2-gram"); // XMLを作成する
     }
 
     public static void main(String[] args){
