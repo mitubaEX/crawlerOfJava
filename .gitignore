@@ -12,3 +12,5 @@ bin/
 downloadJar/
 birthmark/
 test.txt
+
+.idea

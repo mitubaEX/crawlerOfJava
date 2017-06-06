@@ -17,19 +17,19 @@ public class UpdateChecker{
         File file = new File("last_updated.txt");
         SimpleDateFormat sdfBef = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.ENGLISH);
         SimpleDateFormat sdfAft = new SimpleDateFormat("yyyy MM dd HH:mm:ss"); //2012/12/28 18:01:48
-        if(!file.exists()){
+        if(file.exists()){
+            BufferedReader br =  new BufferedReader(new FileReader(file));
+            String[] readDate = br.readLine().split(" ");
+            String[] result = sdfAft.format(sdfBef.parse(args[3] + " " + args[1] + " " + args[6] + " " + args[4])).split(" ");
+            br.close();
+            if(!Objects.equals(result[0], readDate[0]) || !Objects.equals(result[1],readDate[1]))
+                return true;
+        }else{
             file.createNewFile();
             String result = sdfAft.format(sdfBef.parse(args[3] + " " + args[1] + " " + args[6] + " " + args[4]));
             FileWriter filewriter = new FileWriter(file);
             filewriter.write(result);
             filewriter.close();
-        }else{
-        	BufferedReader br =  new BufferedReader(new FileReader(file));
-            String[] readDate = br.readLine().split(" ");
-            String[] result = sdfAft.format(sdfBef.parse(args[3] + " " + args[1] + " " + args[6] + " " + args[4])).split(" ");
-            br.close();
-            if(!Objects.equals(result[0], readDate[0]) || !Objects.equals(result[1],readDate[1]))
-            	return true;
         }
         return false;
     }
