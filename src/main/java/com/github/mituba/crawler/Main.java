@@ -19,7 +19,7 @@ public class Main {
     //    	ダウンロードしてない環境の場合，これを実行する
             startProcess("downloadJar");
 //    	更新確認
-        if(new UpdateChecker().getLastUpdateDay()){
+        if(new UpdateChecker().getLastUpdateDay()){// LastUpdateから1ヶ月経っていたら入る
         	System.out.println(new UpdateChecker().getLastUpdateDay());
             new Updater().deleteDir("downloadJar");
         	System.out.println("delete Complete");

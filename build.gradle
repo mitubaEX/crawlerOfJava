@@ -33,6 +33,10 @@ dependencies {
 
     compile 'com.github.pochi:pochi-runner:1.0-SNAPSHOT'
 
+    // https://mvnrepository.com/artifact/org.apache.solr/solr-solrj
+    compile group: 'org.apache.solr', name: 'solr-solrj', version: '6.5.1'
+
+
     // https://mvnrepository.com/artifact/edu.uci.ics/crawler4j
     // compile group: 'edu.uci.ics', name: 'crawler4j', version: '4.3'
 
