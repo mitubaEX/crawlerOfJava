@@ -18,6 +18,8 @@ public class Searcher{
         new FileDownloader(filePath, directoryPath);
     }
 
+    public void performDownloadGroupAndArtifact(String groupID, String artifactID, String version, String directoryPath) {new FileDownloader(groupID, artifactID, version, directoryPath);}
+
     public List<String> getProductURL(List<String> groupIdList, List<String> artifactIdList, List<String> versionList){
         return IntStream.range(0, groupIdList.size())
             .mapToObj(n -> groupIdList.get(n).replace(".", "/") + "/"
@@ -25,16 +27,18 @@ public class Searcher{
                     + artifactIdList.get(n) + "-" + versionList.get(n) + ".jar")
             .collect(Collectors.toList());
     }
-    
+
     public void performSearch(){
-        getProductURL(list.get(0), list.get(1), list.get(2))
-            .forEach(n -> {
-                try{
-                    performDownload(domain + n, saveDirectory);
-                }catch(Exception e){
-                    System.out.println(e);
-                }
-            });
+        int i = 0;
+        for(String n : getProductURL(list.get(0), list.get(1), list.get(2))) {
+            try {
+                performDownload(domain + n,
+                        saveDirectory + "/" + n.replace("-", "/").replace(".jar", ""));
+                performDownloadGroupAndArtifact(list.get(0).get(i), list.get(1).get(i), list.get(2).get(i), saveDirectory + "/" + n.replace("-", "/").replace(".jar", ""));
+                i++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
-    
 }
