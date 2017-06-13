@@ -1,9 +1,6 @@
 package com.github.mituba.crawler;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.InputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -13,10 +10,22 @@ public class FileDownloader{
         try{
             downloadJar(url, createDirectory(saveDirectoryPath));
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+    public FileDownloader(String groupID, String artifactID, String version, String directoryPath){
+        try {
+            writeJarInformation(groupID, artifactID, version, directoryPath);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
     public FileDownloader(){}
+    public void writeJarInformation(String groupID, String artifactID, String version, String directoryPath) throws IOException{
+        FileWriter fileWriter = new FileWriter(new File(directoryPath + "/"+ artifactID + "-" + version + ".csv"));
+        fileWriter.write(groupID + "," + artifactID + "," + version);
+        fileWriter.close();
+    }
 
     public InputStream getInputStream(String url) throws MalformedURLException, IOException{
         HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
@@ -26,9 +35,9 @@ public class FileDownloader{
         return con.getInputStream();
     }
 
-    public void downloadJar(String url, File directory) throws IOException{
+    public void downloadJar(String url, String directory) throws IOException{
         FileOutputStream fileoutputstream = new FileOutputStream(
-                new File(directory.getName()
+                new File(directory
                     + "/" + url.substring(url.lastIndexOf('/') + 1)));
         int line = -1;
         InputStream in = getInputStream(url);
@@ -37,10 +46,10 @@ public class FileDownloader{
         fileoutputstream.close();
     }
 
-    public File createDirectory(String directoryPath) throws IOException{
+    public String createDirectory(String directoryPath) throws IOException{
         File directory = new File(directoryPath);
         if(!directory.exists())
-            directory.mkdir();
-        return directory;
+            directory.mkdirs();
+        return directoryPath;
     }
 }
