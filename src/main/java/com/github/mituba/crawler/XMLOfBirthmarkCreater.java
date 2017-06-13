@@ -1,8 +1,10 @@
 package com.github.mituba.crawler;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,12 +36,20 @@ public class XMLOfBirthmarkCreater {
         }
     }
 
-    public String createXMLTable(File file){
+    public String createXMLTable(File file, File information){
         try (BufferedReader br = new BufferedReader(new FileReader(file))){
+            BufferedReader brInformation = new BufferedReader(new FileReader(information));
+            String[] classInformation = brInformation.readLine().split(",");
             return String.join(",", br.lines()
                     .map(n -> n.split(",", 4))
                     .filter(n -> n.length >= 4)
-                    .map(n -> "{ \n\"filename\":\""+ n[0] + "\",\n\"jar\":\"" + getMatchString(n[1]) + "\",\n\"kindOfBirthmark\":\"" + n[2] + "\",\n\"birthmark\":\"" + n[3] + "\"\n}\n")
+                    .map(n -> "{ \n\"filename\":\""+ n[0] + "\"," +
+                            "\n\"jar\":\"" + getMatchString(n[1]) + "\"," +
+                            "\n\"kindOfBirthmark\":\"" + n[2] + "\"," +
+                            "\n\"groupID\":\"" + classInformation[0] + "\"," +
+                            "\n\"artifactID\":\"" + classInformation[1] + "\"," +
+                            "\n\"version\":\"" + classInformation[2].replace(".", "_") + "\"," +
+                            "\n\"birthmark_t\":\"" + n[3] + "\"\n}\n")
                     .distinct()
                     .collect(Collectors.toList()));
         }catch (FileNotFoundException e){
@@ -51,20 +61,71 @@ public class XMLOfBirthmarkCreater {
         }
     }
 
+
     public List<File> getFileList(String dirName){
-        return Arrays.asList(new File(dirName).listFiles());
+        searchFile(new File(dirName), "2-gram");
+        return list;
     }
 
     public String getXMLBody(String birthmarkDirectory){
-        List<File> fileList = getFileList(birthmarkDirectory);
-        List<String> strList = fileList.stream().map(n -> createXMLTable(n)).filter(n -> n.length() != 0).collect(Collectors.toList());
-        return "["+ String.join(",\n" ,  strList) + "]";
+        searchFile(new File(birthmarkDirectory), "2-gram");
+//        searchCSVFile(new File(birthmarkDirectory));
+//        System.out.println(list.size() + " " + listCSV.size());
+        List<String> strList = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++){
+            strList.add(createXMLTable(list.get(i),listCSV.get(i)));
+        }
+//        List<String> strList = fileList.stream().map(n -> createXMLTable(n)).filter(n -> n.length() != 0).collect(Collectors.toList());
+        return "["+ String.join(",\n" ,  strList.stream()
+                .filter(n -> !Objects.equals(n,"")).collect(Collectors.toList())) + "]";
     }
 
     public void createXML(String XMLDirectory, String kindOfBirthmark){
-        String xmlBody = getXMLBody("birthmark");
+        String xmlBody = getXMLBody("downloadJar");
         File xmldir = new File(XMLDirectory);
         if(!xmldir.exists()) xmldir.mkdir();
         writeFile(xmlBody, XMLDirectory + "/" + kindOfBirthmark + ".json");
+    }
+
+    List<File> list = new ArrayList<>();
+    List<File> listCSV = new ArrayList<>();
+    public void searchFile(File file, String kindOfBirthmark){
+        try {
+            if (file == null) return;
+            Arrays.stream(file.listFiles())
+                    .forEach(n -> {
+                        if (!n.exists()) System.out.println("ファイルナス");
+                        else if (n.isDirectory()) searchFile(n, kindOfBirthmark);
+                        else if (n.getName().contains(".txt") && n.getName().contains(kindOfBirthmark)){
+                            list.add(n);
+                            if(new File(n.getAbsolutePath()
+                                    .replace("-2-gram","")
+                                    .replace(".jar","")
+                                    .replace(".txt",".csv")).exists())
+                                listCSV.add(new File(n.getAbsolutePath()
+                                        .replace("-2-gram","")
+                                        .replace(".jar","")
+                                        .replace(".txt",".csv")));
+                            else
+                                listCSV.add(new File(""));
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void searchCSVFile(File file){
+        try {
+            if (file == null) return;
+            Arrays.stream(file.listFiles())
+                    .forEach(n -> {
+                        if (!n.exists()) System.out.println("ファイルナス");
+                        else if (n.isDirectory()) searchCSVFile(n);
+                        else if (n.getName().contains(".csv")) listCSV.add(n);
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

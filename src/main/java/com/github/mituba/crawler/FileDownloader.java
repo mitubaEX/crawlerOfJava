@@ -22,8 +22,9 @@ public class FileDownloader{
     }
     public FileDownloader(){}
     public void writeJarInformation(String groupID, String artifactID, String version, String directoryPath) throws IOException{
-        FileWriter fileWriter = new FileWriter(new File(directoryPath + "/" + artifactID + "-" + version + ".csv"));
+        FileWriter fileWriter = new FileWriter(new File(directoryPath + "/"+ artifactID + "-" + version + ".csv"));
         fileWriter.write(groupID + "," + artifactID + "," + version);
+        fileWriter.close();
     }
 
     public InputStream getInputStream(String url) throws MalformedURLException, IOException{
