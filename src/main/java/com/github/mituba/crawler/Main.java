@@ -3,6 +3,7 @@ package com.github.mituba.crawler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -25,8 +26,14 @@ public class Main {
         	System.out.println("delete Complete");
             startProcess("downloadJar");
         }
+        Arrays.asList("2-gram", "3-gram", "4-gram", "5-gram", "6-gram", "uc")
+                .stream()
+                .forEach(n -> {
+                    new Extractor(n).performExtract("downloadJar", "downloadJar");
+                    new XMLOfBirthmarkCreater().createXML("json", n); // XMLを作成する
+                });
 //        new Extractor("2-gram").performExtract("downloadJar", "downloadJar");
-        new XMLOfBirthmarkCreater().createXML("json", "2-gram"); // XMLを作成する
+//        new XMLOfBirthmarkCreater().createXML("json", "2-gram"); // XMLを作成する
     }
 
     public static void main(String[] args){

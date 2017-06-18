@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
  * Created by mituba on 2017/06/06.
  */
 public class XMLOfBirthmarkCreater {
+    List<File> list;
+    List<File> listCSV;
+
     public void writeFile(String body, String filename){
         try {
-            System.out.println(filename);
             new File(filename).createNewFile();
             FileWriter fileWriter = new FileWriter(new File(filename));
             fileWriter.write(body);
@@ -43,13 +45,15 @@ public class XMLOfBirthmarkCreater {
             return String.join(",", br.lines()
                     .map(n -> n.split(",", 4))
                     .filter(n -> n.length >= 4)
+                    .filter(i -> i[3].length() <= 10000)
+                    .filter(i -> !Objects.equals(getMatchString(i[1]),"") )
                     .map(n -> "{ \n\"filename\":\""+ n[0] + "\"," +
                             "\n\"jar\":\"" + getMatchString(n[1]) + "\"," +
                             "\n\"kindOfBirthmark\":\"" + n[2] + "\"," +
                             "\n\"groupID\":\"" + classInformation[0] + "\"," +
                             "\n\"artifactID\":\"" + classInformation[1] + "\"," +
                             "\n\"version\":\"" + classInformation[2].replace(".", "_") + "\"," +
-                            "\n\"birthmark_t\":\"" + n[3] + "\"\n}\n")
+                            "\n\"birthmark\":\"" + n[3] + "\"\n}\n")
                     .distinct()
                     .collect(Collectors.toList()));
         }catch (FileNotFoundException e){
@@ -67,8 +71,8 @@ public class XMLOfBirthmarkCreater {
         return list;
     }
 
-    public String getXMLBody(String birthmarkDirectory){
-        searchFile(new File(birthmarkDirectory), "2-gram");
+    public String getXMLBody(String birthmarkDirectory, String kindOfBirthmark){
+        searchFile(new File(birthmarkDirectory), kindOfBirthmark);
 //        searchCSVFile(new File(birthmarkDirectory));
 //        System.out.println(list.size() + " " + listCSV.size());
         List<String> strList = new ArrayList<>();
@@ -81,14 +85,14 @@ public class XMLOfBirthmarkCreater {
     }
 
     public void createXML(String XMLDirectory, String kindOfBirthmark){
-        String xmlBody = getXMLBody("downloadJar");
+        list = new ArrayList<>();
+        listCSV = new ArrayList<>();
+        String xmlBody = getXMLBody("downloadJar", kindOfBirthmark);
         File xmldir = new File(XMLDirectory);
         if(!xmldir.exists()) xmldir.mkdir();
         writeFile(xmlBody, XMLDirectory + "/" + kindOfBirthmark + ".json");
     }
 
-    List<File> list = new ArrayList<>();
-    List<File> listCSV = new ArrayList<>();
     public void searchFile(File file, String kindOfBirthmark){
         try {
             if (file == null) return;
@@ -99,11 +103,11 @@ public class XMLOfBirthmarkCreater {
                         else if (n.getName().contains(".txt") && n.getName().contains(kindOfBirthmark)){
                             list.add(n);
                             if(new File(n.getAbsolutePath()
-                                    .replace("-2-gram","")
+                                    .replace("-"+kindOfBirthmark,"")
                                     .replace(".jar","")
                                     .replace(".txt",".csv")).exists())
                                 listCSV.add(new File(n.getAbsolutePath()
-                                        .replace("-2-gram","")
+                                        .replace("-"+kindOfBirthmark,"")
                                         .replace(".jar","")
                                         .replace(".txt",".csv")));
                             else
@@ -115,14 +119,14 @@ public class XMLOfBirthmarkCreater {
         }
     }
 
-    public void searchCSVFile(File file){
+    public void searchCSVFile(File file, String kindOfBirthmark){
         try {
             if (file == null) return;
             Arrays.stream(file.listFiles())
                     .forEach(n -> {
                         if (!n.exists()) System.out.println("ファイルナス");
-                        else if (n.isDirectory()) searchCSVFile(n);
-                        else if (n.getName().contains(".csv")) listCSV.add(n);
+                        else if (n.isDirectory()) searchCSVFile(n, kindOfBirthmark);
+                        else if (n.getName().contains(".csv") && n.getName().contains(kindOfBirthmark)) listCSV.add(n);
                     });
         }catch (Exception e){
             e.printStackTrace();
