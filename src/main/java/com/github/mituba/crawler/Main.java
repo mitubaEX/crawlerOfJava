@@ -12,7 +12,7 @@ public class Main {
             List<List<String>> list = new XmlParser("http://central.maven.org/maven2/archetype-catalog.xml").getEachIDList();
             new Searcher("http://central.maven.org/maven2/", saveDirectory, list).performSearch();
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
 	}
     public void run(){
@@ -31,9 +31,8 @@ public class Main {
                 .forEach(n -> {
                     new Extractor(n).performExtract("downloadJar", "downloadJar");
                     new XMLOfBirthmarkCreater().createXML("json", n); // XMLを作成する
+                    new Register("8982", n).registerDocument("json/"+ n + ".json");
                 });
-//        new Extractor("2-gram").performExtract("downloadJar", "downloadJar");
-//        new XMLOfBirthmarkCreater().createXML("json", "2-gram"); // XMLを作成する
     }
 
     public static void main(String[] args){
