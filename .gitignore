@@ -14,6 +14,6 @@ birthmark/
 test.txt
 
 .idea
-json
+/* json */
 
 solr-5.5.0
