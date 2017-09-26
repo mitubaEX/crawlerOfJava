@@ -13,6 +13,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 apply plugin: 'eclipse'
+
 sourceCompatibility = targetCompatibility = '1.8'
 
 // In this section you declare where to find the dependencies of your project
@@ -22,6 +23,7 @@ repositories {
     jcenter()
     mavenLocal()
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -30,6 +32,10 @@ dependencies {
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
+
+
+    // compile('com.github.pochi:pochi-runner:1.0-SNAPSHOT').ext.git = 'https://github.com/tamada/pochi.git'
+
 
     compile 'com.github.pochi:pochi-runner:1.0-SNAPSHOT'
 

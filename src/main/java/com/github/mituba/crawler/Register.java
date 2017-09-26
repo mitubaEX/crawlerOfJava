@@ -16,13 +16,13 @@ public class Register {
     }
 
     public void registerDocument(String filePath){
-        try {
-            // run shellScript
-            Process process = Runtime.getRuntime().exec("sh ./postContent.sh " + birthmark.replace("-", "") + " " + portNum + " " + birthmark);
-            new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     // run shellScript
+        //     Process process = Runtime.getRuntime().exec("sh ./postContent.sh " + birthmark.replace("-", "") + " " + portNum + " " + birthmark);
+        //     new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(System.out::println);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 
 
